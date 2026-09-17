@@ -2,6 +2,7 @@ package com.nimbleways.springboilerplate.services;
 
 import java.time.LocalDate;
 
+import com.nimbleways.springboilerplate.services.notification.DelayNotifier;
 import com.nimbleways.springboilerplate.services.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class ProductService {
     @Autowired
     NotificationService ns;
 
+    @Autowired
+    DelayNotifier delayNotifier;
+
 
 
     public void handleSeasonalProduct(Product p) {
@@ -29,7 +33,7 @@ public class ProductService {
             ns.sendOutOfStockNotification(p.getName());
             pr.save(p);
         } else {
-            // notifyDelay(p.getLeadTime(), p); TODO : use new Bean Instead
+            delayNotifier.notifyDelay(p.getLeadTime(), p);
         }
     }
 

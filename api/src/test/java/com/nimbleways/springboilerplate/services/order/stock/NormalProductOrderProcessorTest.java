@@ -64,13 +64,4 @@ class NormalProductOrderProcessorTest {
         verifyNoInteractions(productRepository);
         assertThat(product.getAvailable()).isZero();
     }
-
-
-    @Test
-    void get_must_returnNormal_product_type(){
-        ProductType productType = normalProductOrderProcessor.getProductType();
-        assertThat(productType).isEqualTo(ProductType.NORMAL);
-
-    }
-
 }

@@ -40,11 +40,34 @@ public class Product {
     @Column(name = "season_end_date")
     private LocalDate seasonEndDate;
 
-    public void decrementStock() {
+
+
+    public void decrementStock(){
         this.setAvailable(this.getAvailable() - 1);
     }
 
+    public boolean isProductAvailiable() {
+        return this.getAvailable() > 0;
+    }
+
+
     public boolean hasLeadTime() {
-        return this.leadTime > 0;
+        return leadTime > 0;
+    }
+
+    public boolean isInSeason() {
+        return  (LocalDate.now().isAfter(this.getSeasonStartDate()) && LocalDate.now().isBefore(this.getSeasonEndDate()));
+    }
+
+    public boolean isOutOfSeasonAfterDelay() {
+        return LocalDate.now().plusDays(this.getLeadTime()).isAfter(this.getSeasonEndDate());
+    }
+
+    public boolean seanonNotStarted() {
+        return this.getSeasonStartDate().isAfter(LocalDate.now());
+    }
+
+    public void markOutOfStock() {
+        this.available=0;
     }
 }
