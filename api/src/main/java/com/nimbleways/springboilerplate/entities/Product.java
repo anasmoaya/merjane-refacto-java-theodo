@@ -70,4 +70,8 @@ public class Product {
     public void markOutOfStock() {
         this.available=0;
     }
+
+    public boolean isExpired() {
+        return this.getExpiryDate().isBefore(LocalDate.now());
+    }
 }
