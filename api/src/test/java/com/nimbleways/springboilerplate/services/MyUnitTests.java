@@ -1,7 +1,10 @@
-package com.nimbleways.springboilerplate.services.implementations;
+package com.nimbleways.springboilerplate.services;
 
+import com.nimbleways.springboilerplate.dto.product.ProductType;
 import com.nimbleways.springboilerplate.entities.Product;
 import com.nimbleways.springboilerplate.repositories.ProductRepository;
+import com.nimbleways.springboilerplate.services.notification.DelayNotifier;
+import com.nimbleways.springboilerplate.services.notification.NotificationService;
 import com.nimbleways.springboilerplate.utils.Annotations.UnitTest;
 
 import org.junit.jupiter.api.Test;
@@ -21,18 +24,20 @@ public class MyUnitTests {
     private NotificationService notificationService;
     @Mock
     private ProductRepository productRepository;
+    @Mock
+    DelayNotifier delayNotifier;
     @InjectMocks 
     private ProductService productService;
 
     @Test
     public void test() {
         // GIVEN
-        Product product =new Product(null, 15, 0, "NORMAL", "RJ45 Cable", null, null, null);
+        Product product =new Product(null, 15, 0, ProductType.EXPIRABLE, "RJ45 Cable", null, null, null);
 
         Mockito.when(productRepository.save(product)).thenReturn(product);
 
         // WHEN
-        productService.notifyDelay(product.getLeadTime(), product);
+        delayNotifier.notifyDelay(product.getLeadTime(), product);
 
         // THEN
         assertEquals(0, product.getAvailable());

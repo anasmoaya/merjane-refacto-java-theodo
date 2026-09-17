@@ -29,7 +29,7 @@ public class ProductService {
             ns.sendOutOfStockNotification(p.getName());
             pr.save(p);
         } else {
-            notifyDelay(p.getLeadTime(), p);
+            // notifyDelay(p.getLeadTime(), p); TODO : use new Bean Instead
         }
     }
 
