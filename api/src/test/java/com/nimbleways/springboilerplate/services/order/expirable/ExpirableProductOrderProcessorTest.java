@@ -37,9 +37,9 @@ class ExpirabaleProductOrderProcessorTest {
     }
 
 
-    @ParameterizedTest(name = "[{index}] {1}")
+    @ParameterizedTest
     @MethodSource("availableAndNotExpired")
-    void available_and_not_expired_should_decrement_and_save(Product product, String scenario) {
+    void available_and_not_expired_should_decrement_and_save(Product product) {
         int availableBefore = product.getAvailable();
 
         expirabaleProductOrderProcessor.process(product);
@@ -53,7 +53,7 @@ class ExpirabaleProductOrderProcessorTest {
 
     @ParameterizedTest
     @MethodSource("expiredOrNotAvailable")
-    void expired_or_not_available_should_notify_and_mark_out_of_stock(Product product, String scenario) {
+    void expired_or_not_available_should_notify_and_mark_out_of_stock(Product product) {
         expirabaleProductOrderProcessor.process(product);
 
         verify(notificationService, times(1)).sendExpirationNotification(product.getName(), product.getExpiryDate());

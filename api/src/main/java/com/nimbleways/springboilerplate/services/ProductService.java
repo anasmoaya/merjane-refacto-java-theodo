@@ -1,50 +1,51 @@
 package com.nimbleways.springboilerplate.services;
 
+import java.awt.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
-import com.nimbleways.springboilerplate.services.notification.DelayNotifier;
-import com.nimbleways.springboilerplate.services.notification.NotificationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbleways.springboilerplate.dto.product.ProcessOrderResponse;
+import com.nimbleways.springboilerplate.entities.Order;
+import com.nimbleways.springboilerplate.services.order.ProductOrderProcessRegistry;
+import com.nimbleways.springboilerplate.repositories.OrderRepository;
+import groovy.util.logging.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.nimbleways.springboilerplate.entities.Product;
 import com.nimbleways.springboilerplate.repositories.ProductRepository;
 
+import javax.management.Notification;
+
+@Slf4j
 @Service
+@Log4j
 public class ProductService {
 
-    @Autowired
-    ProductRepository pr;
-
-    @Autowired
-    NotificationService ns;
-
-    @Autowired
-    DelayNotifier delayNotifier;
 
 
+    private final OrderRepository orderRepository ;
+    private final ProductOrderProcessRegistry productOrderProcessRegistry;
 
-    public void handleSeasonalProduct(Product p) {
-        if (LocalDate.now().plusDays(p.getLeadTime()).isAfter(p.getSeasonEndDate())) {
-            ns.sendOutOfStockNotification(p.getName());
-            p.setAvailable(0);
-            pr.save(p);
-        } else if (p.getSeasonStartDate().isAfter(LocalDate.now())) {
-            ns.sendOutOfStockNotification(p.getName());
-            pr.save(p);
-        } else {
-            delayNotifier.notifyDelay(p.getLeadTime(), p);
-        }
+    public ProductService(OrderRepository orderRepository, ProductOrderProcessRegistry productOrderProcessRegistry) {
+        this.orderRepository = orderRepository;
+        this.productOrderProcessRegistry = productOrderProcessRegistry;
     }
 
-    public void handleExpiredProduct(Product p) {
-        if (p.getAvailable() > 0 && p.getExpiryDate().isAfter(LocalDate.now())) {
-            p.setAvailable(p.getAvailable() - 1);
-            pr.save(p);
-        } else {
-            ns.sendExpirationNotification(p.getName(), p.getExpiryDate());
-            p.setAvailable(0);
-            pr.save(p);
-        }
+
+
+    public ProcessOrderResponse procesOrder(Long orderId)  {
+        Order order = orderRepository.findById(orderId).get();  //null check will change the api behavior
+        Set<Product> products = order.getItems();
+        products.forEach(productOrderProcessRegistry::process);
+        return new ProcessOrderResponse(order.getId());
     }
+
+
+
 }
