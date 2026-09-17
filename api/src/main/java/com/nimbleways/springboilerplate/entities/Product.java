@@ -38,4 +38,12 @@ public class Product {
 
     @Column(name = "season_end_date")
     private LocalDate seasonEndDate;
+
+    public void decrementStock() {
+        this.setAvailable(this.getAvailable() - 1);
+    }
+
+    public boolean hasLeadTime() {
+        return this.leadTime > 0;
+    }
 }

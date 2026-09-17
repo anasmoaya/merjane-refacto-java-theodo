@@ -1,7 +1,8 @@
-package com.nimbleways.springboilerplate.services.implementations;
+package com.nimbleways.springboilerplate.services;
 
 import java.time.LocalDate;
 
+import com.nimbleways.springboilerplate.services.notification.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,7 @@ public class ProductService {
     @Autowired
     NotificationService ns;
 
-    public void notifyDelay(int leadTime, Product p) {
-        p.setLeadTime(leadTime);
-        pr.save(p);
-        ns.sendDelayNotification(leadTime, p.getName());
-    }
+
 
     public void handleSeasonalProduct(Product p) {
         if (LocalDate.now().plusDays(p.getLeadTime()).isAfter(p.getSeasonEndDate())) {

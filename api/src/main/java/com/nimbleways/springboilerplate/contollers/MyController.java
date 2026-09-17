@@ -5,7 +5,7 @@ import com.nimbleways.springboilerplate.entities.Order;
 import com.nimbleways.springboilerplate.entities.Product;
 import com.nimbleways.springboilerplate.repositories.OrderRepository;
 import com.nimbleways.springboilerplate.repositories.ProductRepository;
-import com.nimbleways.springboilerplate.services.implementations.ProductService;
+import com.nimbleways.springboilerplate.services.ProductService;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -42,15 +42,7 @@ public class MyController {
         Set<Product> products = order.getItems();
         for (Product p : products) {
             if (p.getType().equals("NORMAL")) {
-                if (p.getAvailable() > 0) {
-                    p.setAvailable(p.getAvailable() - 1);
-                    pr.save(p);
-                } else {
-                    int leadTime = p.getLeadTime();
-                    if (leadTime > 0) {
-                        ps.notifyDelay(leadTime, p);
-                    }
-                }
+
             } else if (p.getType().equals("SEASONAL")) {
                 // Add new season rules
                 if ((LocalDate.now().isAfter(p.getSeasonStartDate()) && LocalDate.now().isBefore(p.getSeasonEndDate())
