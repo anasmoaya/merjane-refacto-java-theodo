@@ -24,10 +24,8 @@ public class MyUnitTests {
     private NotificationService notificationService;
     @Mock
     private ProductRepository productRepository;
-    @Mock
-    DelayNotifier delayNotifier;
-    @InjectMocks 
-    private ProductService productService;
+    @InjectMocks
+    private DelayNotifier delayNotifier;
 
     @Test
     public void test() {
